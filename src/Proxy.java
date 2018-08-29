@@ -1,7 +1,7 @@
 /*
-   Acadêmico:		Wellysson N Rocha
+   Acadêmico:		Wellysson
    Matrícula:		14334933
-   Disciplina:		Redes de computadores
+   Disciplina:		Redes II
    Curso: 		TADS
    Date:			20/08/2018
 */
@@ -42,9 +42,9 @@ import java.util.Scanner;
 public class Proxy implements Runnable{
 
 
-	// Main method for the program
+	// Método principal para o programa
 	public static void main(String[] args) {
-		// Create an instance of Proxy and begin listening for connections
+		// Crie uma instância do Proxy e comece a ouvir as conexões
 		Proxy myProxy = new Proxy(8085);
 		myProxy.listen();	
 	}
@@ -53,51 +53,51 @@ public class Proxy implements Runnable{
 	private ServerSocket serverSocket;
 
 	/**
-	 * Semaphore for Proxy and Consolee Management System.
+	 * Semáforo para Sistema de Gerenciamento de Proxy e Consolide
 	 */
 	private volatile boolean running = true;
 
 
 	/**
-	 * Data structure for constant order lookup of cache items.
-	 * Key: URL of page/image requested.
-	 * Value: File in storage associated with this key.
+	 * Estrutura de dados para consulta de ordem constante de itens de cache
+	 * Key: URL da página / imagem solicitada.
+	 * Value: Arquivo no armazenamento associado a essa chave.
 	 */
 	static HashMap<String, File> cache;
 
 	/**
-	 * Data structure for constant order lookup of blocked sites.
-	 * Key: URL of page/image requested.
-	 * Value: URL of page/image requested.
+	 * Estrutura de dados para consulta constante de pedidos de sites bloqueados.
+	 * Key: URL da página / imagem solicitada.
+	 * Value: URL da página / imagem solicitada.
 	 */
 	static HashMap<String, String> blockedSites;
 
 	/**
-	 * ArrayList of threads that are currently running and servicing requests.
-	 * This list is required in order to join all threads on closing of server
+	 * ArrayList de threads que estão atualmente em execução e atendendo a solicitações.
+	 * Esta lista é necessária para unir todos os tópicos no fechamento do servidor
 	 */
 	static ArrayList<Thread> servicingThreads;
 
 
 
 	/**
-	 * Create the Proxy Server
-	 * @param port Port number to run proxy server from.
+	 * Crie o servidor proxy
+	 * @param port Número da porta para executar o servidor proxy.
 	 */
 	public Proxy(int port) {
 
-		// Load in hash map containing previously cached sites and blocked Sites
+		// Carregar no mapa hash contendo sites armazenados em cache anteriormente e sites bloqueados
 		cache = new HashMap<>();
 		blockedSites = new HashMap<>();
 
-		// Create array list to hold servicing threads
+		// Criar lista de matriz para manter os segmentos de serviço
 		servicingThreads = new ArrayList<>();
 
-		// Start dynamic manager on a separate thread.
-		new Thread(this).start();	// Starts overriden run() method at bottom
+		// Inicie o gerenciador dinâmico em um encadeamento separado.
+		new Thread(this).start();	// Começa a substituir o método run () na parte inferior
 
 		try{
-			// Load in cached sites from file
+			// Carregar em sites em cache do arquivo
 			File cachedSites = new File("cachedSites.txt");
 			if(!cachedSites.exists()){
 				System.out.println("No cached sites found - creating new file");
@@ -110,7 +110,7 @@ public class Proxy implements Runnable{
 				objectInputStream.close();
 			}
 
-			// Load in blocked sites from file
+			// Carregar em sites bloqueados do arquivo
 			File blockedSitesTxtFile = new File("blockedSites.txt");
 			if(!blockedSitesTxtFile.exists()){
 				System.out.println("No blocked sites found - creating new file");
@@ -131,16 +131,16 @@ public class Proxy implements Runnable{
 		}
 
 		try {
-			// Create the Server Socket for the Proxy 
+			// Criar o soquete (Socket) do servidor para o proxy
 			serverSocket = new ServerSocket(port);
 
-			// Set the timeout
+			// Definir o tempo limite
 			//serverSocket.setSoTimeout(100000);	// debug
 			System.out.println("Waiting for client on port " + serverSocket.getLocalPort() + "..");
 			running = true;
 		} 
 
-		// Catch exceptions associated with opening socket
+		// Pegue as exceções associadas à abertura do soquete (Socket)
 		catch (SocketException se) {
 			System.out.println("Socket Exception when connecting to client");
 			se.printStackTrace();
@@ -155,25 +155,25 @@ public class Proxy implements Runnable{
 
 
 	/**
-	 * Listens to port and accepts new socket connections. 
-	 * Creates a new thread to handle the request and passes it the socket connection and continues listening.
+	 * Escuta a porta e aceita novas conexões de soquete. 
+	 * Cria um novo thread para manipular a solicitação e passa a conexão do soquete e continua ouvindo.
 	 */
 	public void listen(){
 
 		while(running){
 			try {
-				// serverSocket.accpet() Blocks until a connection is made
+				// serverSocket.accpet() Bloqueia até que uma conexão seja feita
 				Socket socket = serverSocket.accept();
 				
-				// Create new Thread and pass it Runnable RequestHandler
+				// Criar novo thread e passá-lo RequestHandler Runnable
 				Thread thread = new Thread(new RequestHandler(socket));
 				
-				// Key a reference to each thread so they can be joined later if necessary
+				// Digite uma referência para cada thread para que eles possam ser associados posteriormente, se necessário
 				servicingThreads.add(thread);
 				
 				thread.start();	
 			} catch (SocketException e) {
-				// Socket exception is triggered by management system to shut down the proxy 
+				// Exceção de soquete é acionada pelo sistema de gerenciamento para desligar o proxy
 				System.out.println("Server closed");
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -183,8 +183,8 @@ public class Proxy implements Runnable{
 
 
 	/**
-	 * Saves the blocked and cached sites to a file so they can be re loaded at a later time.
-	 * Also joins all of the RequestHandler threads currently servicing requests.
+	 * Salva os sites bloqueados e armazenados em cache em um arquivo para que eles possam ser reutilizados posteriormente.
+	 * Também une todas as solicitações de serviço atualmente no ThreadHandler.
 	 */
 	private void closeServer(){
 		System.out.println("\nClosing Server..");
@@ -205,7 +205,7 @@ public class Proxy implements Runnable{
 			fileOutputStream2.close();
 			System.out.println("Blocked Site list saved");
 			try{
-				// Close all servicing threads
+				// Feche todos os encaminhamentos threads
 				for(Thread thread : servicingThreads){
 					if(thread.isAlive()){
 						System.out.print("Waiting on "+  thread.getId()+" to close..");
@@ -222,7 +222,7 @@ public class Proxy implements Runnable{
 				e.printStackTrace();
 			}
 
-			// Close Server Socket
+			// Feche o soquete do servidor
 			try{
 				System.out.println("Terminating Connection");
 				serverSocket.close();
@@ -235,9 +235,9 @@ public class Proxy implements Runnable{
 
 
 		/**
-		 * Looks for File in cache
-		 * @param url of requested file 
-		 * @return File if file is cached, null otherwise
+		 * Procura por arquivo no cache
+		 * @param url de arquivo solicitado
+		 * @return File se o arquivo estiver em cache, null, caso contrário
 		 */
 		public static File getCachedPage(String url){
 			return cache.get(url);
@@ -245,18 +245,18 @@ public class Proxy implements Runnable{
 
 
 		/**
-		 * Adds a new page to the cache
-		 * @param urlString URL of webpage to cache 
-		 * @param fileToCache File Object pointing to File put in cache
+		 * Adiciona uma nova página ao cache
+		 * @param urlString URL de página da web para cache
+		 * @param fileToCache File Objeto apontando para o arquivo colocado no cache
 		 */
 		public static void addCachedPage(String urlString, File fileToCache){
 			cache.put(urlString, fileToCache);
 		}
 
 		/**
-		 * Check if a URL is blocked by the proxy
-		 * @param url URL to check
-		 * @return true if URL is blocked, false otherwise
+		 * Verifique se um URL está bloqueado pelo proxy
+		 * @param url URL checar
+		 * @return true se URL está bloqueado, caso contrário false
 		 */
 		public static boolean isBlocked (String url){
 			if(blockedSites.get(url) != null){
@@ -270,11 +270,11 @@ public class Proxy implements Runnable{
 
 
 		/**
-		 * Creates a management interface which can dynamically update the proxy configurations
-		 * 		blocked : Lists currently blocked sites
-		 *  	cached	: Lists currently cached sites
-		 *  	close	: Closes the proxy server
-		 *  	*		: Adds * to the list of blocked sites
+		 * Cria uma interface de gerenciamento que pode atualizar dinamicamente as configurações de proxy
+		 * 	bloqueado : Lista sites atualmente bloqueados
+		 *  	em cache : Lista sites atualmente armazenados em cache
+		 *  	fechar	: Fecha o servidor proxy
+		 *  	*		: Adiciona * à lista de sites bloqueados
 		 */
 		@Override
 		public void run() {
